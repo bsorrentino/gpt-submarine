@@ -2,6 +2,7 @@ export type Vec = { x: number; y: number; z: number };
 export type Input = { move: number; port: boolean; starboard: boolean };
 export type Phase = 'ready' | 'playing' | 'sinking' | 'won' | 'lost';
 export type EffectKind = 'splash' | 'breach' | 'underwater' | 'fire';
+export type SoundKind = 'charge-launch' | 'charge-splash' | 'torpedo-surface' | 'ship-hit' | 'sub-hit' | 'charge-miss';
 export type Effect = Vec & { id: number; kind: EffectKind; age: number; duration: number };
 export type Submarine = Vec & { id: number; vx: number; cooldown: number; dead: boolean; deathAge: number };
 export type Projectile = Vec & { id: number; kind: 'charge' | 'torpedo'; vx: number; vz: number; wet: boolean; age: number; fuse: number };
@@ -21,7 +22,7 @@ export class Game {
   projectiles: Projectile[] = [];
   effects: Effect[] = [];
   particles: Particle[] = [];
-  sounds: EffectKind[] = [];
+  sounds: SoundKind[] = [];
   cooldown = [0, 0];
   fuseDepth = 160;
   shots = 0;
@@ -42,10 +43,10 @@ export class Game {
     if(this.phase!=='playing'||this.cooldown[slot]>0) return;
     this.cooldown[slot]=0.85; this.shots++;
     this.projectiles.push({id:this.serial++,kind:'charge',x:this.ship.x+side*40,y:0,z:22,vx:this.ship.vx*0.55+side*51,vz:80,wet:false,age:0,fuse:this.fuseDepth});
+    this.sounds.push('charge-launch');
   }
   burst(kind: EffectKind, p: Vec) {
     this.effects.push({...p,id:this.serial++,kind,age:0,duration:kind==='fire'?3:2.2});
-    this.sounds.push(kind);
     if(kind!=='splash') this.shake=Math.max(this.shake,kind==='fire'?10:4);
     const count=kind==='fire'?65:kind==='underwater'?48:32;
     for(let i=0;i<count;i++) {
@@ -62,8 +63,10 @@ export class Game {
     for(let i=0;i<14;i++) this.particles.push({...s,vx:(this.random()-.5)*65,vy:(this.random()-.5)*40,vz:(this.random()-.5)*70,age:0,life:5,size:2+this.random()*5,kind:'debris'});
   }
   private detonate(p: Projectile) {
+    const killsBefore=this.kills;
     this.burst('underwater',p);
     for(const s of this.subs) if(!s.dead && Math.hypot(s.x-p.x,s.y-p.y,(s.z-p.z)*1.1)<62) this.destroySub(s);
+    this.sounds.push(this.kills>killsBefore?'sub-hit':'charge-miss');
   }
   step(dt: number, input: Input) {
     if(this.phase==='ready'||this.phase==='lost'||this.phase==='won') return;
@@ -99,7 +102,7 @@ export class Game {
         if(p.wet) { p.vx*=Math.exp(-dt*2.5); p.vz+=(-48-p.vz)*(1-Math.exp(-dt*2)); }
         else p.vz-=120*dt;
         p.x+=p.vx*dt; p.z+=p.vz*dt;
-        if(!p.wet&&p.z<=0) { p.wet=true; p.vx*=.4; p.vz*=.3; this.burst('splash',{...p,z:0}); }
+        if(!p.wet&&p.z<=0) { p.wet=true; p.vx*=.4; p.vz*=.3; this.burst('splash',{...p,z:0}); this.sounds.push('charge-splash'); }
         const hit=this.subs.find(s=>!s.dead&&segmentDistance(prev,p,s)<26);
         if(p.wet&&(hit||p.z<=-p.fuse)) { this.detonate(p); continue; }
       } else {
@@ -107,7 +110,8 @@ export class Game {
         if(p.z>=-7) {
           if(this.phase==='playing' && Math.abs(p.x-this.ship.x)<49) {
             this.phase='sinking'; this.burst('fire',{...this.ship,z:10}); this.burst('splash',this.ship);
-          } else this.burst('breach',{...p,z:0});
+            this.sounds.push('ship-hit');
+          } else { this.burst('breach',{...p,z:0}); this.sounds.push('torpedo-surface'); }
           continue;
         }
       }
