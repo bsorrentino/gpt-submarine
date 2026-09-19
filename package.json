@@ -1,29 +1,18 @@
 {
-  "name": "ga-submarine",
-  "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "name": "depthwatch",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "build": "tsc --watch",
-    "start": "parcel serve index.html"
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "node --experimental-strip-types --test tests/*.test.ts",
+    "test:browser": "playwright test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "@parcel/transformer-typescript-tsc": "^2.0.0-rc.0",
-    "parcel": "^2.0.0-rc.0",
-    "parcel-reporter-multiple-static-file-copier": "^1.0.5",
-    "parcel-resolver-ignore": "^1.0.2",
-    "typescript": "^3.4.5"
-  },
-  "dependencies": {
-    "@bsorrentino/ga-ts": "^1.1.0"
-  },
-  "multipleStaticFileCopier": [
-    {
-      "origin": "images",
-      "destination": "dist/images"
-    }
-  ]
+    "typescript": "~5.9.3",
+    "vite": "^7.1.0",
+    "@playwright/test": "^1.55.0"
+  }
 }
