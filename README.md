@@ -27,6 +27,16 @@ On-screen controls also support holding with a mouse or touch. Sound is opt-in. 
 
 Lead moving submarines: charges inherit some ship velocity, follow an arc, lose speed on water entry, and sink under drag. A direct hit or a nearby depth-fuse explosion destroys a submarine. Orange surface markers indicate incoming torpedoes. Keep moving: a single torpedo hit destroys your ship. Sink all five submarines and survive the remaining ordnance to win. Restart from the mission result screen.
 
+## Screenshots
+
+| Briefing | Gameplay |
+| --- | --- |
+| ![Mission briefing](docs/screenshots/desktop-briefing.png) | ![Desktop gameplay](docs/screenshots/desktop-game.png) |
+
+| Mobile | Ship explosion |
+| --- | --- |
+| ![Mobile gameplay](docs/screenshots/mobile-game.png) | ![Ship explosion](docs/screenshots/ship-explosion.png) |
+
 ## Implementation
 
 - Canvas 2D with a true isometric world projection and transparent ocean section; no external art assets or rendering dependencies.
