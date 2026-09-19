@@ -43,7 +43,7 @@ start.addEventListener('click',()=>{
   game.start();shownPhase=game.phase;overlay.hidden=true;pause.disabled=false;clearInput();el('brief-controls').hidden=false;el('brief-note').hidden=false;start.blur();
 });
 pause.addEventListener('click',togglePause);
-el('sound').addEventListener('click',async()=>{try{const enabled=await audio.toggle();el('sound').textContent=enabled?'Sound on':'Sound off';el('sound').setAttribute('aria-pressed',String(enabled));}catch{el('sound').textContent='Audio unavailable';}});
+el('sound').addEventListener('click',async()=>{const button=el<HTMLButtonElement>('sound');button.disabled=true;try{const enabled=await audio.toggle();el('sound').textContent=enabled?'Sound on':'Sound off';el('sound').setAttribute('aria-pressed',String(enabled));}catch{el('sound').textContent='Audio unavailable';}finally{button.disabled=false;}});
 document.querySelectorAll<HTMLButtonElement>('[data-depth]').forEach(b=>b.addEventListener('click',()=>setDepth(Number(b.dataset.depth))));
 document.querySelectorAll<HTMLButtonElement>('[data-hold]').forEach(b=>{
   b.addEventListener('pointerdown',e=>{e.preventDefault();b.setPointerCapture(e.pointerId);held.add(b.dataset.hold!);});

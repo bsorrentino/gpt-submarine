@@ -1,6 +1,6 @@
 # Depthwatch
 
-A playable TypeScript browser game implementing `.agent/specs/F001_GAME.md` and its four sketches. Command one destroyer against five submarines in an isometric ocean cutaway.
+A playable TypeScript browser game implementing `.agent/specs/F001_GAME.md` and its four sketches, plus the retro sound effects in `.agent/specs/F002_GAME.md`. Command one destroyer against five submarines in an isometric ocean cutaway.
 
 ## Run
 
@@ -23,7 +23,7 @@ Open the local URL printed by Vite. Use `npm run build` for a production build i
 | Set fuse to 90 / 160 / 230 meters | 1 / 2 / 3 |
 | Pause / resume | P or Escape |
 
-On-screen controls also support holding with a mouse or touch. Sound is opt-in. Switching tabs or losing window focus pauses the battle.
+On-screen controls also support holding with a mouse or touch. Sound is opt-in: click **Sound off** to enable it; click **Sound on** to mute immediately. Switching tabs or losing window focus pauses the battle.
 
 Lead moving submarines: charges inherit some ship velocity, follow an arc, lose speed on water entry, and sink under drag. A direct hit or a nearby depth-fuse explosion destroys a submarine. Orange surface markers indicate incoming torpedoes. Keep moving: a single torpedo hit destroys your ship. Sink all five submarines and survive the remaining ordnance to win. Restart from the mission result screen.
 
@@ -45,6 +45,7 @@ Lead moving submarines: charges inherit some ship velocity, follow an arc, lose 
 - Twin independently reloading launchers, rotating radar, submarine propellers, depth selection and submarine patrol/torpedo AI.
 - Destroyed submarines split and descend. The destroyer lists and sinks after a hit.
 - Responsive interface, keyboard and pointer controls, pause, replay, and synthesized optional audio.
+- Six distinct 1980s arcade sound effects: charge launch, water entry, torpedo surface explosion, ship hit, submarine hit, and missed charge. Stepped square-wave tones and clocked noise are generated locally with Web Audio; no audio downloads are needed. A multi-target charge explosion plays one hit cue.
 
 Physics and destruction are stylized game approximations rather than a naval engineering simulation. Combat follows the sketches' single horizontal patrol corridor; the ocean volume provides the isometric presentation. Google Fonts are optional, with local system fallbacks.
 
@@ -56,6 +57,6 @@ npm run build
 npm run test:browser
 ```
 
-Simulation tests exercise launch physics, splash transitions, fuse detonation, direct hits, wreck descent, torpedo outcomes, victory, movement limits, and population bounds. Browser tests exercise desktop keyboard controls, pause/resume, mobile pointer controls, and horizontal overflow; screenshots go to `test-results/`.
+Simulation tests exercise launch physics, splash transitions, fuse detonation, direct hits, wreck descent, torpedo outcomes, victory, movement limits, and population bounds. Browser tests exercise desktop keyboard controls, pause/resume, mobile pointer controls, horizontal overflow, sound toggling, and all six generated audio buffers; screenshots go to `test-results/`.
 
 Browser tests use an installed Google Chrome. To use Playwright's bundled Chromium instead, remove `channel: 'chrome'` from `playwright.config.ts` and run `npx playwright install chromium`.
